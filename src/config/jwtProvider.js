@@ -28,7 +28,26 @@ const getUserIdFromToken = (token) => {
   }
 };
 
+const getUserRoleFromToken = (token) => {
+  try {
+    const decodedToken = jwt.verify(token, SECRET_KEY);
+    return decodedToken.role;
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      console.error("Error: Token expired");
+      return error.message
+    } else if (error.name === "JsonWebTokenError") {
+      console.error("Error: JWT malformed");
+      return error.message
+    } else {
+      console.error("Error verifying token:", error.message);
+      return error.message
+    }
+  }
+};
+
 module.exports = {
   generateToken,
   getUserIdFromToken,
+  getUserRoleFromToken,
 };

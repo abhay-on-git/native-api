@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
 const Retailer = require("../models/retailer.model");
 const DeliveryBoy = require("../models/deliveryBoy.model");
-const jwt = require("jsonwebtoken");
+// const {getUserRoleFromToken} = require('../config/jwtProvider')
 
 const userSignup = async (req, res) => {
   try {
@@ -83,7 +83,7 @@ const login = async (req, res) => {
   try {
     let user;
     if (checkBoxValue.toString() === "deliveryBoy") {
-      console.log("Delivery Boy Signin form Invoked ")
+      console.log("Delivery Boy Signin form Invoked ");
       user = await DeliveryBoy.findOne({ email });
       if (!user) {
         return res.status(404).send({ error: "User not found" });
@@ -95,9 +95,8 @@ const login = async (req, res) => {
 
       const jwt = jwtProvider.generateToken(user._id, checkBoxValue.toString());
       return res.status(200).send({ jwt, message: "login success" });
-
     } else if (checkBoxValue.toString() === "retailer") {
-      console.log("Retailer Boy Signin form Invoked ")
+      console.log("Retailer Boy Signin form Invoked ");
       user = await Retailer.findOne({ email });
       if (!user) {
         return res.status(404).send({ error: "User not found" });
@@ -109,9 +108,8 @@ const login = async (req, res) => {
 
       const jwt = jwtProvider.generateToken(user._id, checkBoxValue.toString());
       return res.status(200).send({ jwt, message: "login success" });
-
     } else {
-      console.log("User Boy Signin form Invoked ")
+      console.log("User Boy Signin form Invoked ");
       user = await User.findOne({ email });
       if (!user) {
         return res.status(404).send({ error: "User not found" });
@@ -130,23 +128,19 @@ const login = async (req, res) => {
   }
 };
 
-const getUserRoleFromToken = (token) => {
+const getRoleFromToken = (req, res) => {
   try {
-    const decodedToken = jwt.verify(token, SECRET_KEY);
-    // console.log(decodedToken)
-    // console.log(decodedToken, "Decoded Token:"); // Check if this logs correctly
-    return decodedToken.role;
-  } catch (error) {
-    if (error.name === "TokenExpiredError") {
-      console.error("Error: Token expired");
-      return error.message
-    } else if (error.name === "JsonWebTokenError") {
-      console.error("Error: JWT malformed");
-      return error.message
-    } else {
-      console.error("Error verifying token:", error.message);
-      return error.message
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "No Token Found in getRoleFromToken function" });
     }
+    const role = jwtProvider.getUserRoleFromToken(token);
+    return res.status(200).json({ role });
+  } catch (error) {
+    console.log("Error in getting Role");
+    return res.status(500).send({ error: error.message });
   }
 };
 
@@ -155,5 +149,5 @@ module.exports = {
   deliveryBoySignup,
   retailerSignup,
   login,
-  getUserRoleFromToken,
+  getRoleFromToken,
 };
