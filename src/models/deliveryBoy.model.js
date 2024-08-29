@@ -1,0 +1,36 @@
+const mongoose = require("mongoose");
+
+const deliveryBoySchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    mobile: {
+      type: Number,
+      required: true,
+    },
+    referrel: {
+      type: String,
+    },
+
+    role:{
+        type:String,
+        enum:["user","deliveryBoy","retailer"],
+        default:"deliveryBoy",
+    }
+  },
+  { timestamps: true }
+);
+
+const deliveryBoy = mongoose.model("deliveryBoys", deliveryBoySchema);
+
+module.exports = deliveryBoy;
