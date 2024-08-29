@@ -6,6 +6,6 @@ router.post('/userSignup', authController.userSignup);
 router.post('/deliveryBoySignup', authController.deliveryBoySignup);
 router.post('/retailerSignup', authController.retailerSignup);
 router.post('/signin', authController.login);
-router.post('/userRole', authController.getUserRoleFromToken);
+router.get('/userRole', authController.getUserRoleFromToken);
 
 module.exports = router;
