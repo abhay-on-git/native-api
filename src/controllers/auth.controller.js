@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
 const Retailer = require("../models/retailer.model");
 const DeliveryBoy = require("../models/deliveryBoy.model");
+const jwt = require("jsonwebtoken");
 
 const userSignup = async (req, res) => {
   try {
